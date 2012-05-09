@@ -101,6 +101,21 @@
     STAssertTrue(symbolicLinkPersists, @"Symbolic links should persist from the original archive to the outputted files.");
 }
 
+- (void)testUnzippingWithUnicodeFilenameInside {
+    
+    NSString* zipPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"Unicode" ofType:@"zip"];
+    NSString* outputPath = [self _cachesPath:@"Unicode"];
+    
+    [SSZipArchive unzipFileAtPath:zipPath toDestination:outputPath delegate:self];
+    
+    bool unicodeFilenameWasExtracted = [[NSFileManager defaultManager] fileExistsAtPath:[outputPath stringByAppendingPathComponent:@"Unicode/Accént.txt"]];
+    
+    bool unicodeFolderWasExtracted = [[NSFileManager defaultManager] fileExistsAtPath:[outputPath stringByAppendingPathComponent:@"Unicode/Fólder"]];
+    
+    STAssertTrue(unicodeFilenameWasExtracted, @"Files with filenames in unicode should be extracted properly.");
+    STAssertTrue(unicodeFolderWasExtracted, @"Folders with names in unicode should be extracted propertly.");
+}
+
 
 // Commented out to avoid checking in several gig file into the repository. Simply add a file named
 // `LargeArchive.zip` to the project and uncomment out these lines to test.
